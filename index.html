@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUFF Fun Box</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        :root {
+            --primary: #2b5278;
+            --secondary: #3a7bb8;
+            --accent: #4caf50;
+            --text: #ffffff;
+            --bg: #000000;
+            --card-bg: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            overflow: hidden;
+            max-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 20px;
+            color: var(--accent);
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        .tab {
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        
+        .tab.active {
+            color: var(--accent);
+            border-bottom: 3px solid var(--accent);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid var(--secondary);
+            box-shadow: 0 0 10px rgba(58, 123, 184, 0.3);
+        }
+        
+        .card-title {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .stat-item {
+            background-color: var(--primary);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--primary);
+        }
+        
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #000;
+            font-size: 20px;
+        }
+        
+        .achievement-icon.completed {
+            background-color: #ffd700;
+            color: #000;
+        }
+        
+        .achievement-info {
+            flex: 1;
+        }
+        
+        .achievement-title {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-desc {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background-color: var(--primary);
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+        }
+        
+        .game-section {
+            display: none;
+        }
+        
+        .game-section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        canvas {
+            background-color: #4a9fe0;
+            border-radius: 10px;
+            border: 3px solid var(--secondary);
+            max-width: 100%;
+            max-height: 60vh;
+        }
+        
+        .game-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .game-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin: 15px 0;
+        }
+        
+        .score-box {
+            background-color: var(--primary);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 120px;
+            font-size: 12px;
+        }
+
+        /* Стили для мини-игр */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .game-card {
+            background-color: var(--primary);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid var(--secondary);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(58, 123, 184, 0.3);
+        }
+        
+        .game-card.active {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .game-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .game-title {
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+        
+        .game-desc {
+            font-size: 9px;
+            opacity: 0.7;
+            line-height: 1.3;
+        }
+
+        /* Стили для достижений по играм */
+        .game-achievement-title {
+            color: var(--secondary);
+            font-size: 12px;
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        /* Стили для друзей */
+        .invite-block {
+            display: flex;
+            margin-bottom: 20px;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .invite-link {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--card-bg);
+            font-size: 10px;
+            word-break: break-all;
+            border-right: 2px solid var(--secondary);
+        }
+        
+        #copyBtn {
+            border-radius: 0;
+            border: none;
+            font-size: 10px;
+            padding: 0 15px;
+        }
+        
+        .friends-list {
+            margin-top: 15px;
+        }
+        
+        .friend-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--primary);
+        }
+        
+        .friend-avatar {
+            width: 30px;
+            height: 30px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        
+        .friend-name {
+            flex: 1;
+            font-size: 11px;
+        }
+        
+        .friend-score {
+            font-size: 10px;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">BLUFF FUN BOX</div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="game">Игра</div>
+            <div class="tab" data-tab="games">Мини-игры</div>
+            <div class="tab" data-tab="friends">Друзья</div>
+            <div class="tab" data-tab="profile">Профиль</div>
+            <div class="tab" data-tab="achievements">Достижения</div>
+        </div>
+        
+        <div class="game-section active" id="gameSection">
+            <!-- Контент будет динамически меняться при выборе игры -->
+        </div>
+        
+        <div class="tab-content" id="gamesTab">
+            <div class="card">
+                <h3 class="card-title">МИНИ-ИГРЫ</h3>
+                <p style="font-size: 10px; margin-bottom: 15px; opacity: 0.7;">Выберите игру из списка</p>
+                
+                <div class="games-grid">
+                    <div class="game-card active" data-game="flappy">
+                        <div class="game-icon">🦋</div>
+                        <div class="game-title">Flappy Bird</div>
+                        <div class="game-desc">Классическая игра</div>
+                    </div>
+                    
+                    <div class="game-card" data-game="tetris">
+                        <div class="game-icon">🧊</div>
+                        <div class="game-title">Тетрис</div>
+                        <div class="game-desc">Классический тетрис</div>
+                    </div>
+                    
+                    <div class="game-card" data-game="dino">
+                        <div class="game-icon">🦖</div>
+                        <div class="game-title">Dino Run</div>
+                        <div class="game-desc">Беги и прыгай</div>
+                    </div>
+                    
+                    <div class="game-card" data-game="snake">
+                        <div class="game-icon">🐍</div>
+                        <div class="game-title">Змейка</div>
+                        <div class="game-desc">Классическая змейка</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="friendsTab">
+            <div class="card">
+                <h3 class="card-title">ДРУЗЬЯ</h3>
+                <p style="font-size: 10px; margin-bottom: 15px; opacity: 0.7;">Пригласите друзей в игру</p>
+                
+                <div class="invite-block">
+                    <div class="invite-link" id="inviteLink"></div>
+                    <button class="game-btn" id="copyBtn">Копировать</button>
+                </div>
+                
+                <div class="friends-list">
+                    <div class="friend-item">
+                        <div class="friend-avatar">A</div>
+                        <div class="friend-name">Алексей</div>
+                        <div class="friend-score">120 очков</div>
+                    </div>
+                    <div class="friend-item">
+                        <div class="friend-avatar">M</div>
+                        <div class="friend-name">Мария</div>
+                        <div class="friend-score">85 очков</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="profileTab">
+            <div class="card">
+                <div class="profile-info">
+                    <div class="profile-avatar">TG</div>
+                    <div>
+                        <h3 class="card-title">ИГРОК</h3>
+                        <p style="font-size: 10px;">@username</p>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalGames">0</div>
+                        <div class="stat-label">ИГР СЫГРАНО</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalScore">0</div>
+                        <div class="stat-label">ОБЩИЙ СЧЕТ</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="achievementsCount">0</div>
+                        <div class="stat-label">ДОСТИЖЕНИЯ</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="favoriteGame">-</div>
+                        <div class="stat-label">ЛЮБИМАЯ ИГРА</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">СТАТИСТИКА</h3>
+                <div class="stat-item">
+                    <div class="stat-value" id="flappyStats">0</div>
+                    <div class="stat-label">FLAPPY BIRD РЕКОРД</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="tetrisStats">0</div>
+                    <div class="stat-label">ТЕТРИС РЕКОРД</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="achievementsTab">
+            <div class="card">
+                <h3 class="card-title">ВАШИ ДОСТИЖЕНИЯ</h3>
+                
+                <h4 class="game-achievement-title">FLAPPY BIRD</h4>
+                <div class="achievement-item">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">НОВИЧОК</div>
+                        <div class="achievement-desc">Сыграйте первую игру</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-newbie" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🦅</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ПТИЧКА</div>
+                        <div class="achievement-desc">Наберите 10 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-bird" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">КОРОЛЬ НЕБА</div>
+                        <div class="achievement-desc">Наберите 50 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-king" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🚀</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">АС</div>
+                        <div class="achievement-desc">Наберите 100 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-ace" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">💎</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ЛЕГЕНДА</div>
+                        <div class="achievement-desc">Наберите 500 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-legend" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🏅</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">БОГ</div>
+                        <div class="achievement-desc">Наберите 1000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="flappy-god" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4 class="game-achievement-title">ТЕТРИС</h4>
+                <div class="achievement-item">
+                    <div class="achievement-icon">🧊</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">НОВИЧОК</div>
+                        <div class="achievement-desc">Сыграйте первую игру</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-newbie" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🏓</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ЛЮБИТЕЛЬ</div>
+                        <div class="achievement-desc">Наберите 1000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-amateur" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ПРОФИ</div>
+                        <div class="achievement-desc">Наберите 5000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-pro" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ЭКСПЕРТ</div>
+                        <div class="achievement-desc">Наберите 10000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-expert" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">МАСТЕР</div>
+                        <div class="achievement-desc">Наберите 20000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-master" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievement-item">
+                    <div class="achievement-icon">💎</div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">ЛЕГЕНДА</div>
+                        <div class="achievement-desc">Наберите 50000 очков</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tetris-legend" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================== ОБЩИЕ ФУНКЦИИ ======================
+        
+        // Проверяем, что мы внутри Telegram WebApp
+        if (window.Telegram && Telegram.WebApp) {
+            // Развернуть приложение на весь экран
+            Telegram.WebApp.expand();
+            
+            // Настройка цветов
+            Telegram.WebApp.setHeaderColor('#2b5278');
+            Telegram.WebApp.setBackgroundColor('#000000');
+            
+            // Получаем данные пользователя
+            const user = Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                // Обновляем аватар и имя пользователя
+                const avatar = document.querySelector('.profile-avatar');
+                const username = document.querySelector('.profile-info p');
+                
+                if (user.first_name) {
+                    avatar.textContent = user.first_name[0];
+                }
+                if (user.username) {
+                    username.textContent = `@${user.username}`;
+                }
+            }
+        }
+
+        // Проверка на платформу Telegram
+        if (window.Telegram && Telegram.WebApp) {
+            // Инициализация WebApp
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+            
+            // Установка темы
+            const colorScheme = Telegram.WebApp.colorScheme;
+            if (colorScheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+            
+            // Обработка событий
+            Telegram.WebApp.onEvent('viewportChanged', (e) => {
+                console.log('Viewport changed:', e);
+            });
+            
+            // Основная кнопка
+            Telegram.WebApp.MainButton.text = 'Начать игру';
+            Telegram.WebApp.MainButton.show();
+            
+            Telegram.WebApp.MainButton.onClick(() => {
+                if (currentGame === 'flappy') {
+                    flappyStartGame();
+                } else if (currentGame === 'tetris') {
+                    tetrisStartGame();
+                }
+                Telegram.WebApp.MainButton.hide();
+            });
+        }
+
+        // Текущая выбранная игра
+        let currentGame = 'flappy';
+
+        // Функция для обновления достижений
+        function updateAchievement(id, completed, progress) {
+            const element = document.getElementById(id);
+            if (!element) return;
+            
+            element.style.width = `${progress}%`;
+            const icon = element.closest('.achievement-item').querySelector('.achievement-icon');
+            if (completed) {
+                icon.classList.add('completed');
+            } else {
+                icon.classList.remove('completed');
+            }
+        }
+
+        // ====================== FLAPPY BIRD ======================
+        
+        // Инициализация игры
+        let flappyCanvas, flappyCtx;
+        let flappyStartButton, flappyBackButton;
+        let flappyCurrentScoreElement, flappyHighScoreElement;
+
+        // Загрузка текстур
+        const flappyTextures = {
+            bird: new Image(),
+            pipe: new Image(),
+            background: new Image(),
+            startScreen: new Image()
+        };
+
+        flappyTextures.bird.src = 'https://i.ibb.co/PzV8FDcS/bird.png';
+        flappyTextures.pipe.src = 'https://i.ibb.co/hRfdDhHS/pipe.png';
+        flappyTextures.background.src = 'https://i.ibb.co/sdxkcsDL/background.png';
+        flappyTextures.startScreen.src = 'https://i.ibb.co/3m4WTGxf/flappy-start.jpg';
+
+        // Настройки игры
+        const flappyBird = {
+            x: 50,
+            y: 150,
+            width: 40,
+            height: 30,
+            velocity: 0,
+            gravity: 0.5,
+            jumpForce: -8,
+            rotation: 0,
+            hitbox: {
+                x: 6,
+                y: 6,
+                width: 28,
+                height: 18
+            }
+        };
+
+        const flappyPipes = [];
+        let flappyScore = 0;
+        let flappyHighScore = 0;
+        let flappyGameRunning = false;
+        let flappyAnimationId;
+        let flappyFrames = 0;
+        let flappyBackgroundOffset = 0;
+        let flappyTotalGamesPlayed = 0;
+
+        // Загрузка данных Flappy Bird
+        function loadFlappyData() {
+            const savedData = localStorage.getItem('flappyGameData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                flappyHighScore = data.highScore || 0;
+                flappyTotalGamesPlayed = data.totalGames || 0;
+                flappyHighScoreElement.textContent = flappyHighScore;
+                updateFlappyProfileStats();
+                updateFlappyAchievements();
+            }
+        }
+
+        // Сохранение данных Flappy Bird
+        function saveFlappyData() {
+            const data = {
+                highScore: flappyHighScore,
+                totalGames: flappyTotalGamesPlayed,
+                achievements: {
+                    newbie: flappyTotalGamesPlayed > 0,
+                    bird: flappyHighScore >= 10,
+                    king: flappyHighScore >= 50,
+                    ace: flappyHighScore >= 100,
+                    legend: flappyHighScore >= 500,
+                    god: flappyHighScore >= 1000
+                }
+            };
+            localStorage.setItem('flappyGameData', JSON.stringify(data));
+        }
+
+        // Обновление статистики профиля
+        function updateFlappyProfileStats() {
+            document.getElementById('totalGames').textContent = flappyTotalGamesPlayed;
+            document.getElementById('flappyStats').textContent = flappyHighScore;
+            document.getElementById('favoriteGame').textContent = flappyTotalGamesPlayed > 0 ? 'FLAPPY BIRD' : '-';
+            updateAchievementsCount();
+        }
+
+        // Расчет достижений
+        function calculateFlappyAchievements() {
+            let count = 0;
+            if (flappyTotalGamesPlayed > 0) count++;
+            if (flappyHighScore >= 10) count++;
+            if (flappyHighScore >= 50) count++;
+            if (flappyHighScore >= 100) count++;
+            if (flappyHighScore >= 500) count++;
+            if (flappyHighScore >= 1000) count++;
+            return count;
+        }
+
+        // Обновление счетчика достижений
+        function updateAchievementsCount() {
+            const flappyCount = calculateFlappyAchievements();
+            const tetrisCount = calculateTetrisAchievements();
+            document.getElementById('achievementsCount').textContent = flappyCount + tetrisCount;
+        }
+
+        // Рисуем птицу
+        function drawFlappyBird() {
+            flappyCtx.save();
+            flappyCtx.translate(flappyBird.x + flappyBird.width / 2, flappyBird.y + flappyBird.height / 2);
+            flappyCtx.rotate(flappyBird.rotation * Math.PI / 180);
+            flappyCtx.drawImage(
+                flappyTextures.bird, 
+                -flappyBird.width / 2, 
+                -flappyBird.height / 2, 
+                flappyBird.width, 
+                flappyBird.height
+            );
+            flappyCtx.restore();
+            
+            flappyBird.rotation = Math.min(30, Math.max(-30, flappyBird.velocity * 3));
+        }
+
+        // Рисуем трубы
+        function drawFlappyPipes() {
+            flappyPipes.forEach(pipe => {
+                flappyCtx.save();
+                flappyCtx.translate(pipe.x + 80 / 2, pipe.topHeight / 2);
+                flappyCtx.scale(1, -1);
+                flappyCtx.drawImage(flappyTextures.pipe, -80 / 2, -pipe.topHeight / 2, 80, pipe.topHeight);
+                flappyCtx.restore();
+                flappyCtx.drawImage(flappyTextures.pipe, pipe.x, flappyCanvas.height - pipe.bottomHeight, 80, pipe.bottomHeight);
+            });
+        }
+
+        // Рисуем фон
+        function drawFlappyBackground() {
+            if (!flappyGameRunning && flappyScore === 0 && flappyTextures.startScreen.complete) {
+                // Показываем заставку, когда игра не запущена
+                flappyCtx.drawImage(flappyTextures.startScreen, 0, 0, flappyCanvas.width, flappyCanvas.height);
+            } else {
+                // Обычный игровой фон
+                flappyCtx.drawImage(flappyTextures.background, flappyBackgroundOffset % flappyCanvas.width, 0, flappyCanvas.width, flappyCanvas.height);
+                flappyCtx.drawImage(flappyTextures.background, (flappyBackgroundOffset % flappyCanvas.width) - flappyCanvas.width, 0, flappyCanvas.width, flappyCanvas.height);
+                
+                if (flappyGameRunning) flappyBackgroundOffset += 0.5;
+            }
+        }
+
+        // Создаем трубу
+        function createFlappyPipe() {
+            const gap = 120;
+            const minHeight = 60;
+            const maxHeight = flappyCanvas.height - gap - minHeight;
+            const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
+            
+            flappyPipes.push({
+                x: flappyCanvas.width,
+                topHeight,
+                bottomHeight: flappyCanvas.height - gap - topHeight,
+                passed: false
+            });
+        }
+
+        // Проверка столкновений
+        function checkFlappyCollision() {
+            if (flappyBird.y + flappyBird.hitbox.y < 0 || flappyBird.y + flappyBird.hitbox.y + flappyBird.hitbox.height > flappyCanvas.height) {
+                return true;
+            }
+            
+            for (const pipe of flappyPipes) {
+                const birdLeft = flappyBird.x + flappyBird.hitbox.x;
+                const birdRight = birdLeft + flappyBird.hitbox.width;
+                const birdTop = flappyBird.y + flappyBird.hitbox.y;
+                const birdBottom = birdTop + flappyBird.hitbox.height;
+                
+                const pipeLeft = pipe.x + 15;
+                const pipeRight = pipeLeft + 50;
+                
+                if (birdRight > pipeLeft && birdLeft < pipeRight) {
+                    if (birdTop < pipe.topHeight - 10 || birdBottom > flappyCanvas.height - pipe.bottomHeight + 10) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        // Игровой цикл
+        function flappyUpdate() {
+            flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+            drawFlappyBackground();
+            
+            flappyBird.velocity += flappyBird.gravity;
+            flappyBird.y += flappyBird.velocity;
+            
+            if (checkFlappyCollision()) {
+                flappyEndGame();
+                return;
+            }
+            
+            if (flappyGameRunning) {
+                if (flappyFrames % 100 === 0) createFlappyPipe();
+                
+                for (let i = flappyPipes.length - 1; i >= 0; i--) {
+                    flappyPipes[i].x -= 2;
+                    
+                    if (!flappyPipes[i].passed && flappyBird.x > flappyPipes[i].x + 80) {
+                        flappyPipes[i].passed = true;
+                        flappyScore++;
+                        flappyCurrentScoreElement.textContent = flappyScore;
+                        updateFlappyAchievements();
+                    }
+                    
+                    if (flappyPipes[i].x + 80 < 0) flappyPipes.splice(i, 1);
+                }
+            }
+            
+            drawFlappyPipes();
+            drawFlappyBird();
+            flappyFrames++;
+            flappyAnimationId = requestAnimationFrame(flappyUpdate);
+        }
+
+        // Начало игры
+        function flappyStartGame() {
+            if (flappyGameRunning) return;
+            
+            flappyBird.y = 150;
+            flappyBird.velocity = 0;
+            flappyBird.rotation = 0;
+            flappyPipes.length = 0;
+            flappyScore = 0;
+            flappyCurrentScoreElement.textContent = flappyScore;
+            flappyGameRunning = true;
+            flappyFrames = 0;
+            flappyBackgroundOffset = 0;
+            flappyStartButton.textContent = 'Пауза';
+            flappyBackButton.style.display = 'none';
+            
+            if (!flappyAnimationId) {
+                flappyUpdate();
+            } else {
+                flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+                drawFlappyBackground();
+                drawFlappyBird();
+            }
+        }
+
+        // Пауза игры
+        function flappyPauseGame() {
+            flappyGameRunning = false;
+            flappyStartButton.textContent = 'Продолжить';
+            flappyBackButton.style.display = 'block';
+            cancelAnimationFrame(flappyAnimationId);
+            flappyAnimationId = null;
+            
+            // Отрисовываем текущее состояние игры при паузе
+            flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+            drawFlappyBackground();
+            drawFlappyPipes();
+            drawFlappyBird();
+        }
+
+        // Конец игры
+        function flappyEndGame() {
+            flappyGameRunning = false;
+            flappyStartButton.textContent = 'Играть снова';
+            flappyBackButton.style.display = 'block';
+            cancelAnimationFrame(flappyAnimationId);
+            flappyAnimationId = null;
+            
+            flappyTotalGamesPlayed++;
+            
+            if (flappyScore > flappyHighScore) {
+                flappyHighScore = flappyScore;
+                flappyHighScoreElement.textContent = flappyHighScore;
+            }
+            
+            updateFlappyProfileStats();
+            saveFlappyData();
+            updateFlappyAchievements();
+        }
+
+        // Обновление прогресса достижений
+        function updateFlappyAchievements() {
+            updateAchievement('flappy-newbie', flappyTotalGamesPlayed > 0, flappyTotalGamesPlayed > 0 ? 100 : 0);
+            updateAchievement('flappy-bird', flappyHighScore >= 10, Math.min(100, flappyHighScore / 10 * 100));
+            updateAchievement('flappy-king', flappyHighScore >= 50, Math.min(100, flappyHighScore / 50 * 100));
+            updateAchievement('flappy-ace', flappyHighScore >= 100, Math.min(100, flappyHighScore / 100 * 100));
+            updateAchievement('flappy-legend', flappyHighScore >= 500, Math.min(100, flappyHighScore / 500 * 100));
+            updateAchievement('flappy-god', flappyHighScore >= 1000, Math.min(100, flappyHighScore / 1000 * 100));
+            
+            updateAchievementsCount();
+        }
+
+        // Обработка прыжка
+        function flappyJump() {
+            if (flappyGameRunning) {
+                flappyBird.velocity = flappyBird.jumpForce;
+            }
+        }
+
+        // Инициализация Flappy Bird
+        function setupFlappyGame() {
+            const gameSection = document.getElementById('gameSection');
+            gameSection.innerHTML = `
+                <div class="score-container">
+                    <div class="score-box">
+                        Текущий: <span id="flappyCurrentScore">0</span>
+                    </div>
+                    <div class="score-box">
+                        Рекорд: <span id="flappyHighScore">0</span>
+                    </div>
+                </div>
+                
+                <canvas id="flappyCanvas" width="300" height="400"></canvas>
+                
+                <div class="game-controls">
+                    <button class="game-btn" id="flappyStartButton">Старт</button>
+                    <button class="game-btn" id="flappyBackButton" style="display: none;">Назад</button>
+                </div>
+            `;
+            
+            flappyCanvas = document.getElementById('flappyCanvas');
+            flappyCtx = flappyCanvas.getContext('2d');
+            flappyStartButton = document.getElementById('flappyStartButton');
+            flappyBackButton = document.getElementById('flappyBackButton');
+            flappyCurrentScoreElement = document.getElementById('flappyCurrentScore');
+            flappyHighScoreElement = document.getElementById('flappyHighScore');
+            
+            loadFlappyData();
+            
+            // Обработчики событий
+            flappyCanvas.addEventListener('click', flappyJump);
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    flappyJump();
+                    e.preventDefault();
+                }
+            });
+            
+            flappyStartButton.addEventListener('click', () => {
+                if (!flappyGameRunning && flappyStartButton.textContent === 'Играть снова') {
+                    flappyStartGame();
+                } else if (flappyGameRunning) {
+                    flappyPauseGame();
+                } else {
+                    flappyStartGame();
+                }
+            });
+            
+            flappyBackButton.addEventListener('click', () => {
+                flappyPauseGame();
+                if (window.Telegram && Telegram.WebApp) {
+                    Telegram.WebApp.close();
+                }
+            });
+            
+            // Проверка загрузки текстур
+            let loaded = 0;
+            const totalImages = Object.keys(flappyTextures).length;
+            Object.values(flappyTextures).forEach(img => {
+                img.onload = () => {
+                    loaded++;
+                    if (loaded === totalImages) {
+                        console.log('All textures loaded');
+                        if (!flappyGameRunning) {
+                            flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+                            drawFlappyBackground();
+                        }
+                    }
+                };
+                img.onerror = () => {
+                    console.error('Error loading image:', img.src);
+                };
+            });
+            
+            // Первоначальная отрисовка
+            if (!flappyGameRunning) {
+                flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+                if (flappyTextures.startScreen.complete) {
+                    drawFlappyBackground();
+                }
+            }
+        }
+
+        // ====================== ТЕТРИС ======================
+        
+        // Константы для Тетриса
+        const TETRIS_COLORS = [
+            null,
+            '#FF0D72', // I
+            '#0DC2FF', // J
+            '#0DFF72', // L
+            '#F538FF', // O
+            '#FF8E0D', // S
+            '#FFE138', // T
+            '#3877FF'  // Z
+        ];
+
+        const TETRIS_SHAPES = [
+            null,
+            [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]], // I
+            [[2, 0, 0], [2, 2, 2], [0, 0, 0]],                         // J
+            [[0, 0, 3], [3, 3, 3], [0, 0, 0]],                         // L
+            [[0, 4, 4], [0, 4, 4], [0, 0, 0]],                         // O
+            [[0, 5, 5], [5, 5, 0], [0, 0, 0]],                         // S
+            [[0, 6, 0], [6, 6, 6], [0, 0, 0]],                         // T
+            [[7, 7, 0], [0, 7, 7], [0, 0, 0]]                          // Z
+        ];
+
+        // Инициализация Тетриса
+        let tetrisCanvas, tetrisCtx;
+        let tetrisScore = 0;
+        let tetrisHighScore = 0;
+        let tetrisBoard;
+        let tetrisPiece;
+        let tetrisNextPiece;
+        let tetrisGameRunning = false;
+        let tetrisAnimationId;
+        let tetrisDropStart;
+        let tetrisSpeed = 1000; // начальная скорость падения
+        let tetrisLevel = 1;
+        let tetrisLines = 0;
+        let tetrisTotalGamesPlayed = 0;
+
+        // Загрузка данных Тетриса
+        function loadTetrisData() {
+            const savedData = localStorage.getItem('tetrisGameData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                tetrisHighScore = data.highScore || 0;
+                tetrisTotalGamesPlayed = data.totalGames || 0;
+                document.getElementById('tetrisHighScore').textContent = tetrisHighScore;
+                updateTetrisProfileStats();
+                updateTetrisAchievements();
+            }
+        }
+
+        // Сохранение данных Тетриса
+        function saveTetrisData() {
+            const data = {
+                highScore: tetrisHighScore,
+                totalGames: tetrisTotalGamesPlayed,
+                achievements: {
+                    newbie: tetrisTotalGamesPlayed > 0,
+                    amateur: tetrisHighScore >= 1000,
+                    pro: tetrisHighScore >= 5000,
+                    expert: tetrisHighScore >= 10000,
+                    master: tetrisHighScore >= 20000,
+                    legend: tetrisHighScore >= 50000
+                }
+            };
+            localStorage.setItem('tetrisGameData', JSON.stringify(data));
+        }
+
+        // Расчет достижений Тетриса
+        function calculateTetrisAchievements() {
+            let count = 0;
+            if (tetrisTotalGamesPlayed > 0) count++;
+            if (tetrisHighScore >= 1000) count++;
+            if (tetrisHighScore >= 5000) count++;
+            if (tetrisHighScore >= 10000) count++;
+            if (tetrisHighScore >= 20000) count++;
+            if (tetrisHighScore >= 50000) count++;
+            return count;
+        }
+
+        // Обновление статистики профиля для Тетриса
+        function updateTetrisProfileStats() {
+            document.getElementById('tetrisStats').textContent = tetrisHighScore;
+            updateAchievementsCount();
+        }
+
+        // Инициализация игрового поля Тетриса
+        function initTetris() {
+            tetrisCanvas = document.getElementById('tetrisCanvas');
+            tetrisCtx = tetrisCanvas.getContext('2d');
+            tetrisCtx.scale(20, 20);
+            
+            // Загрузка данных
+            loadTetrisData();
+            
+            // Создаем пустое поле
+            tetrisBoard = createTetrisBoard(10, 20);
+            
+            // Создаем первую фигуру
+            tetrisPiece = createTetrisPiece();
+            tetrisNextPiece = createTetrisPiece();
+            
+            // Отрисовываем начальное состояние
+            drawTetris();
+        }
+
+        // Создание игрового поля
+        function createTetrisBoard(width, height) {
+            const board = [];
+            while (height--) {
+                board.push(new Array(width).fill(0));
+            }
+            return board;
+        }
+
+        // Создание новой фигуры
+        function createTetrisPiece() {
+            const shapeId = Math.floor(Math.random() * 7) + 1;
+            const shape = TETRIS_SHAPES[shapeId];
+            
+            return {
+                pos: {x: Math.floor(10 / 2) - Math.floor(shape[0].length / 2), y: 0},
+                shape: shape,
+                color: TETRIS_COLORS[shapeId]
+            };
+        }
+
+        // Отрисовка игрового поля
+        function drawTetris() {
+            tetrisCtx.fillStyle = '#000';
+            tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+            
+            // Рисуем границы поля
+            tetrisCtx.strokeStyle = '#3a7bb8';
+            tetrisCtx.lineWidth = 0.1;
+            tetrisCtx.strokeRect(0, 0, 10, 20);
+            
+            // Рисуем стакавшиеся фигуры
+            drawTetrisMatrix(tetrisBoard, {x: 0, y: 0});
+            
+            // Рисуем текущую фигуру
+            drawTetrisMatrix(tetrisPiece.shape, tetrisPiece.pos);
+            
+            // Рисуем следующую фигуру (превью)
+            drawTetrisNextPiece();
+            
+            // Рисуем счет
+            drawTetrisScore();
+        }
+
+        // Отрисовка матрицы (игрового поля или фигуры)
+        function drawTetrisMatrix(matrix, offset) {
+            matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        tetrisCtx.fillStyle = TETRIS_COLORS[value] || tetrisPiece.color;
+                        tetrisCtx.fillRect(x + offset.x, y + offset.y, 1, 1);
+                        
+                        // Добавляем границы для блоков
+                        tetrisCtx.strokeStyle = '#fff';
+                        tetrisCtx.lineWidth = 0.05;
+                        tetrisCtx.strokeRect(x + offset.x, y + offset.y, 1, 1);
+                    }
+                });
+            });
+        }
+
+        // Отрисовка следующей фигуры
+        function drawTetrisNextPiece() {
+            // Рисуем рамку для превью
+            tetrisCtx.fillStyle = '#1a1a1a';
+            tetrisCtx.fillRect(11, 0, 6, 6);
+            tetrisCtx.strokeStyle = '#3a7bb8';
+            tetrisCtx.lineWidth = 0.1;
+            tetrisCtx.strokeRect(11, 0, 6, 6);
+            
+            // Подпись
+            tetrisCtx.fillStyle = '#4caf50';
+            tetrisCtx.font = '0.6px Press Start 2P';
+            tetrisCtx.fillText('NEXT', 11.5, 0.8);
+            
+            // Рисуем следующую фигуру по центру области превью
+            const shape = tetrisNextPiece.shape;
+            const offsetX = 13.5 - shape[0].length / 2;
+            const offsetY = 3 - shape.length / 2;
+            
+            shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        tetrisCtx.fillStyle = tetrisNextPiece.color;
+                        tetrisCtx.fillRect(x + offsetX, y + offsetY, 1, 1);
+                        
+                        // Границы блоков
+                        tetrisCtx.strokeStyle = '#fff';
+                        tetrisCtx.lineWidth = 0.05;
+                        tetrisCtx.strokeRect(x + offsetX, y + offsetY, 1, 1);
+                    }
+                });
+            });
+        }
+
+        // Отрисовка счета
+        function drawTetrisScore() {
+            tetrisCtx.fillStyle = '#1a1a1a';
+            tetrisCtx.fillRect(11, 7, 6, 6);
+            tetrisCtx.strokeStyle = '#3a7bb8';
+            tetrisCtx.lineWidth = 0.1;
+            tetrisCtx.strokeRect(11, 7, 6, 6);
+            
+            // Подписи и значения
+            tetrisCtx.fillStyle = '#4caf50';
+            tetrisCtx.font = '0.5px Press Start 2P';
+            
+            tetrisCtx.fillText('SCORE', 11.5, 8);
+            tetrisCtx.fillText(tetrisScore.toString(), 11.5, 8.8);
+            
+            tetrisCtx.fillText('LEVEL', 11.5, 9.8);
+            tetrisCtx.fillText(tetrisLevel.toString(), 11.5, 10.6);
+            
+            tetrisCtx.fillText('LINES', 11.5, 11.6);
+            tetrisCtx.fillText(tetrisLines.toString(), 11.5, 12.4);
+        }
+
+        // Проверка столкновений
+        function tetrisCollide() {
+            const [m, o] = [tetrisPiece.shape, tetrisPiece.pos];
+            for (let y = 0; y < m.length; ++y) {
+                for (let x = 0; x < m[y].length; ++x) {
+                    if (m[y][x] !== 0 &&
+                       (tetrisBoard[y + o.y] === undefined ||
+                        tetrisBoard[y + o.y][x + o.x] === undefined ||
+                        tetrisBoard[y + o.y][x + o.x] !== 0)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Объединение фигуры с полем
+        function tetrisMerge() {
+            tetrisPiece.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        tetrisBoard[y + tetrisPiece.pos.y][x + tetrisPiece.pos.x] = value;
+                    }
+                });
+            });
+        }
+
+        // Поворот фигуры
+        function tetrisRotate() {
+            const clone = JSON.parse(JSON.stringify(tetrisPiece));
+            
+            // Транспонирование матрицы
+            for (let y = 0; y < clone.shape.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                    [clone.shape[x][y], clone.shape[y][x]] = [clone.shape[y][x], clone.shape[x][y]];
+                }
+            }
+            
+            // Обратный порядок столбцов
+            clone.shape.forEach(row => row.reverse());
+            
+            if (!tetrisCollideWith(clone)) {
+                tetrisPiece.shape = clone.shape;
+            }
+        }
+
+        // Проверка столкновений для конкретной фигуры
+        function tetrisCollideWith(piece) {
+            const [m, o] = [piece.shape, piece.pos];
+            for (let y = 0; y < m.length; ++y) {
+                for (let x = 0; x < m[y].length; ++x) {
+                    if (m[y][x] !== 0 &&
+                       (tetrisBoard[y + o.y] === undefined ||
+                        tetrisBoard[y + o.y][x + o.x] === undefined ||
+                        tetrisBoard[y + o.y][x + o.x] !== 0)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Движение фигуры
+        function tetrisMovePiece(dir) {
+            tetrisPiece.pos.x += dir;
+            if (tetrisCollide()) {
+                tetrisPiece.pos.x -= dir;
+            }
+        }
+
+        // Падение фигуры
+        function tetrisDropPiece() {
+            tetrisPiece.pos.y++;
+            if (tetrisCollide()) {
+                tetrisPiece.pos.y--;
+                tetrisMerge();
+                tetrisClearLines();
+                tetrisPiece = tetrisNextPiece;
+                tetrisNextPiece = createTetrisPiece();
+                
+                // Проверка на проигрыш
+                if (tetrisCollide()) {
+                    tetrisEndGame();
+                }
+            }
+            tetrisDropStart = Date.now();
+        }
+
+        // Ускоренное падение
+        function tetrisHardDrop() {
+            while (!tetrisCollide()) {
+                tetrisPiece.pos.y++;
+            }
+            tetrisPiece.pos.y--;
+            tetrisDropPiece();
+        }
+
+        // Очистка заполненных линий
+        function tetrisClearLines() {
+            let linesCleared = 0;
+            
+            outer: for (let y = tetrisBoard.length - 1; y >= 0; --y) {
+                for (let x = 0; x < tetrisBoard[y].length; ++x) {
+                    if (tetrisBoard[y][x] === 0) {
+                        continue outer;
+                    }
+                }
+                
+                // Удаляем заполненную строку
+                const row = tetrisBoard.splice(y, 1)[0].fill(0);
+                tetrisBoard.unshift(row);
+                ++y;
+                
+                linesCleared++;
+            }
+            
+            if (linesCleared > 0) {
+                // Обновляем счет
+                tetrisLines += linesCleared;
+                tetrisScore += [0, 40, 100, 300, 1200][linesCleared] * tetrisLevel;
+                
+                // Проверяем переход на новый уровень (каждые 10 линий)
+                const newLevel = Math.floor(tetrisLines / 10) + 1;
+                if (newLevel > tetrisLevel) {
+                    tetrisLevel = newLevel;
+                    tetrisSpeed = Math.max(100, 1000 - (tetrisLevel - 1) * 100);
+                }
+                
+                // Обновляем рекорд
+                if (tetrisScore > tetrisHighScore) {
+                    tetrisHighScore = tetrisScore;
+                    document.getElementById('tetrisHighScore').textContent = tetrisHighScore;
+                }
+                
+                // Обновляем статистику профиля
+                updateTetrisProfileStats();
+                saveTetrisData();
+                updateTetrisAchievements();
+            }
+        }
+
+        // Игровой цикл Тетриса
+        function tetrisUpdate() {
+            const now = Date.now();
+            const delta = now - tetrisDropStart;
+            
+            if (delta > tetrisSpeed) {
+                tetrisDropPiece();
+            }
+            
+            drawTetris();
+            tetrisAnimationId = requestAnimationFrame(tetrisUpdate);
+        }
+
+        // Начало игры в Тетрис
+        function tetrisStartGame() {
+            if (tetrisGameRunning) return;
+            
+            // Сброс состояния
+            tetrisBoard = createTetrisBoard(10, 20);
+            tetrisPiece = createTetrisPiece();
+            tetrisNextPiece = createTetrisPiece();
+            tetrisScore = 0;
+            tetrisLevel = 1;
+            tetrisLines = 0;
+            tetrisSpeed = 1000;
+            tetrisGameRunning = true;
+            tetrisDropStart = Date.now();
+            
+            // Обновление UI
+            document.getElementById('tetrisCurrentScore').textContent = tetrisScore;
+            document.getElementById('tetrisHighScore').textContent = tetrisHighScore;
+            document.getElementById('tetrisStartButton').textContent = 'Пауза';
+            document.getElementById('tetrisBackButton').style.display = 'none';
+            
+            // Запуск игрового цикла
+            tetrisUpdate();
+        }
+
+        // Пауза игры
+        function tetrisPauseGame() {
+            if (!tetrisGameRunning) return;
+            
+            tetrisGameRunning = false;
+            cancelAnimationFrame(tetrisAnimationId);
+            tetrisAnimationId = null;
+            
+            // Обновление UI
+            document.getElementById('tetrisStartButton').textContent = 'Продолжить';
+            document.getElementById('tetrisBackButton').style.display = 'block';
+            
+            // Отрисовка паузы
+            tetrisCtx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+            
+            tetrisCtx.fillStyle = '#4caf50';
+            tetrisCtx.font = '1.5px Press Start 2P';
+            tetrisCtx.textAlign = 'center';
+            tetrisCtx.fillText('ПАУЗА', tetrisCanvas.width / 40, tetrisCanvas.height / 40);
+            tetrisCtx.textAlign = 'left';
+        }
+
+        // Конец игры
+        function tetrisEndGame() {
+            tetrisGameRunning = false;
+            cancelAnimationFrame(tetrisAnimationId);
+            tetrisAnimationId = null;
+            
+            // Обновление UI
+            document.getElementById('tetrisStartButton').textContent = 'Играть снова';
+            document.getElementById('tetrisBackButton').style.display = 'block';
+            
+            // Отрисовка экрана окончания игры
+            tetrisCtx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+            
+            tetrisCtx.fillStyle = '#FF0D72';
+            tetrisCtx.font = '1.5px Press Start 2P';
+            tetrisCtx.textAlign = 'center';
+            tetrisCtx.fillText('ИГРА ОКОНЧЕНА', tetrisCanvas.width / 40, tetrisCanvas.height / 40 - 2);
+            
+            tetrisCtx.fillStyle = '#4caf50';
+            tetrisCtx.font = '1px Press Start 2P';
+            tetrisCtx.fillText(`Счет: ${tetrisScore}`, tetrisCanvas.width / 40, tetrisCanvas.height / 40);
+            tetrisCtx.fillText(`Рекорд: ${tetrisHighScore}`, tetrisCanvas.width / 40, tetrisCanvas.height / 40 + 1.5);
+            tetrisCtx.textAlign = 'left';
+            
+            tetrisTotalGamesPlayed++;
+            
+            // Сохранение данных
+            saveTetrisData();
+            updateTetrisProfileStats();
+            updateTetrisAchievements();
+        }
+
+        // Обновление достижений Тетриса
+        function updateTetrisAchievements() {
+            const savedData = localStorage.getItem('tetrisGameData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const achievements = data.achievements || {};
+                
+                updateAchievement('tetris-newbie', achievements.newbie, achievements.newbie ? 100 : 0);
+                updateAchievement('tetris-amateur', achievements.amateur, achievements.amateur ? 100 : Math.min(100, tetrisHighScore / 10));
+                updateAchievement('tetris-pro', achievements.pro, achievements.pro ? 100 : Math.min(100, tetrisHighScore / 50));
+                updateAchievement('tetris-expert', achievements.expert, achievements.expert ? 100 : Math.min(100, tetrisHighScore / 100));
+                updateAchievement('tetris-master', achievements.master, achievements.master ? 100 : Math.min(100, tetrisHighScore / 200));
+                updateAchievement('tetris-legend', achievements.legend, achievements.legend ? 100 : Math.min(100, tetrisHighScore / 500));
+            }
+            
+            updateAchievementsCount();
+        }
+
+        // Обработка нажатий клавиш для Тетриса
+        function tetrisHandleKeyPress(e) {
+            if (!tetrisGameRunning) return;
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                    tetrisMovePiece(-1);
+                    break;
+                case 'ArrowRight':
+                    tetrisMovePiece(1);
+                    break;
+                case 'ArrowDown':
+                    tetrisDropPiece();
+                    break;
+                case 'ArrowUp':
+                    tetrisRotate();
+                    break;
+                case ' ':
+                    tetrisHardDrop();
+                    break;
+                default:
+                    return;
+            }
+            
+            e.preventDefault();
+        }
+
+        // Инициализация Тетриса при выборе игры
+        function setupTetrisGame() {
+            // Создаем контейнер для игры
+            const gameSection = document.getElementById('gameSection');
+            gameSection.innerHTML = `
+                <div class="score-container">
+                    <div class="score-box">
+                        Текущий: <span id="tetrisCurrentScore">0</span>
+                    </div>
+                    <div class="score-box">
+                        Рекорд: <span id="tetrisHighScore">0</span>
+                    </div>
+                </div>
+                
+                <div id="tetrisCanvasContainer" style="position: relative;">
+                    <canvas id="tetrisCanvas" width="200" height="400"></canvas>
+                </div>
+                
+                <div class="game-controls">
+                    <button class="game-btn" id="tetrisStartButton">Старт</button>
+                    <button class="game-btn" id="tetrisBackButton" style="display: none;">Назад</button>
+                </div>
+            `;
+            
+            // Инициализируем игру
+            initTetris();
+            
+            // Настройка обработчиков событий
+            document.getElementById('tetrisStartButton').addEventListener('click', () => {
+                if (!tetrisGameRunning && document.getElementById('tetrisStartButton').textContent === 'Играть снова') {
+                    tetrisStartGame();
+                } else if (tetrisGameRunning) {
+                    tetrisPauseGame();
+                } else {
+                    tetrisStartGame();
+                }
+            });
+            
+            document.getElementById('tetrisBackButton').addEventListener('click', () => {
+                tetrisPauseGame();
+                if (window.Telegram && Telegram.WebApp) {
+                    Telegram.WebApp.close();
+                }
+            });
+            
+            // Обработка клавиш
+            document.addEventListener('keydown', tetrisHandleKeyPress);
+            
+            // Обработка свайпов для мобильных устройств
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            const tetrisCanvas = document.getElementById('tetrisCanvas');
+            
+            tetrisCanvas.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                e.preventDefault();
+            }, { passive: false });
+            
+            tetrisCanvas.addEventListener('touchmove', (e) => {
+                if (!tetrisGameRunning) return;
+                
+                const touchEndX = e.touches[0].clientX;
+                const touchEndY = e.touches[0].clientY;
+                const dx = touchEndX - touchStartX;
+                const dy = touchEndY - touchStartY;
+                
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    // Горизонтальный свайп
+                    if (dx > 10) {
+                        tetrisMovePiece(1);
+                        touchStartX = touchEndX;
+                    } else if (dx < -10) {
+                        tetrisMovePiece(-1);
+                        touchStartX = touchEndX;
+                    }
+                } else {
+                    // Вертикальный свайп
+                    if (dy > 10) {
+                        tetrisHardDrop();
+                        touchStartY = touchEndY;
+                    } else if (dy < -10) {
+                        tetrisRotate();
+                        touchStartY = touchEndY;
+                    }
+                }
+                
+                e.preventDefault();
+            }, { passive: false });
+            
+            tetrisCanvas.addEventListener('touchend', (e) => {
+                if (!tetrisGameRunning) return;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const dx = touchEndX - touchStartX;
+                const dy = touchEndY - touchStartY;
+                
+                // Короткое нажатие - поворот
+                if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+                    tetrisRotate();
+                }
+                
+                e.preventDefault();
+            }, { passive: false });
+        }
+
+        // ====================== ОБЩИЕ ОБРАБОТЧИКИ ======================
+
+        // Запрет масштабирования
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Копирование ссылки
+        document.getElementById('copyBtn').addEventListener('click', async () => {
+            const link = document.getElementById('inviteLink').textContent;
+            try {
+                await navigator.clipboard.writeText(link);
+                document.getElementById('copyBtn').textContent = 'Скопировано!';
+                setTimeout(() => {
+                    document.getElementById('copyBtn').textContent = 'Копировать';
+                }, 2000);
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+                document.getElementById('copyBtn').textContent = 'Ошибка';
+                setTimeout(() => {
+                    document.getElementById('copyBtn').textContent = 'Копировать';
+                }, 2000);
+            }
+        });
+        
+        // Переключение табов
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById('gameSection').classList.remove('active');
+                
+                tab.classList.add('active');
+                
+                if (tab.dataset.tab === 'game') {
+                    document.getElementById('gameSection').classList.add('active');
+                } else {
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                }
+            });
+        });
+        
+        // Обработчики для карточек игр
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Убираем выделение у всех карточек
+                document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+                // Выделяем текущую выбранную игру
+                this.classList.add('active');
+                
+                const game = this.getAttribute('data-game');
+                currentGame = game;
+                
+                if (game === 'flappy') {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.tab[data-tab="game"]').classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById('gameSection').classList.add('active');
+                    setupFlappyGame();
+                } else if (game === 'tetris') {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.tab[data-tab="game"]').classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById('gameSection').classList.add('active');
+                    setupTetrisGame();
+                } else {
+                    alert('Эта игра появится в следующем обновлении!');
+                }
+            });
+        });
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            // Устанавливаем реферальную ссылку
+            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe.user) {
+                const user = Telegram.WebApp.initDataUnsafe.user;
+                if (Telegram.WebApp.initDataUnsafe.start_param) {
+                    document.getElementById('inviteLink').textContent = 
+                        `https://t.me/${user.username}?start=game_${Telegram.WebApp.initDataUnsafe.start_param}`;
+                }
+            }
+            
+            // Загружаем Flappy Bird по умолчанию
+            setupFlappyGame();
+        });
+    </script>
+</body>
+</html>
